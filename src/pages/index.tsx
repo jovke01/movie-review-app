@@ -1,10 +1,10 @@
 import Head from 'next/head';
 import path from 'node:path';
 import * as fs from 'node:fs';
-import { Movie } from '@/types/Movie';
+import { Movie, MovieCard } from '@/types/Movie';
+import Image from 'next/image';
 
-export default function Home({ movies }: { movies: Movie[] }) {
-  console.log(movies[0]);
+export default function Home({ movies }: { movies: MovieCard[] }) {
   return (
     <>
       <Head>
@@ -13,7 +13,23 @@ export default function Home({ movies }: { movies: Movie[] }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>Hello</div>
+      <div>
+        {movies.map((movie) => (
+          <div key={movie.id}>
+            <Image
+              width={100}
+              height={40}
+              src={movie.poster}
+              alt={movie.title}
+            />
+            <p>{movie.title}</p>
+            <p>{movie.poster}</p>
+            <p>{movie.release_date ?? ''}</p>
+            <p>{movie.isFavorite}</p>
+            <h2>{movie.imdbRating}</h2>
+          </div>
+        ))}
+      </div>
     </>
   );
 }
@@ -22,9 +38,35 @@ export async function getServerSideProps() {
   const filePath = path.join(process.cwd(), '/src/data', 'movies.json');
   const jsonData = fs.readFileSync(filePath, 'utf-8');
   const movies: Movie[] = JSON.parse(jsonData);
+
+  const formatedMovies = movies.map(
+    (movie): MovieCard => ({
+      id: movie.id,
+      title: movie.title,
+      poster: `${process.env.NEXT_PUBLIC_IMAGE_URL}/${movie.poster_path}`,
+      release_date: movie?.release_date ?? null,
+      isFavorite: false,
+      imdbRating: movie.ratings[0].rating,
+    })
+  );
+  const onlyUnique = (array: MovieCard[]): MovieCard[] => {
+    const uniqueMovies = new Map<number, MovieCard>();
+    array.forEach((movie) => {
+      if (!uniqueMovies.has(movie.id)) {
+        uniqueMovies.set(movie.id, movie);
+      }
+    });
+
+    return Array.from(uniqueMovies.values());
+  };
+
+  const filteredMovies = onlyUnique(formatedMovies);
+  const sortedMovies = filteredMovies.sort(
+    (a, b) => b.imdbRating - a.imdbRating
+  );
   return {
     props: {
-      movies: movies,
+      movies: onlyUnique(sortedMovies),
     },
   };
 }

@@ -13,4 +13,14 @@ export type Movie = {
     id: string;
     rating: number;
   }[];
+  release_date: string;
+};
+
+export type MovieCard = {
+  id: number;
+  title: string;
+  poster: string;
+  release_date?: string;
+  isFavorite: boolean;
+  imdbRating: number;
 };
