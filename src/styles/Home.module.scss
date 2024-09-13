@@ -1,6 +1,10 @@
 .cardGrid {
-  width: 50%;
-  max-width: 80%;
+  width: 80%;
   display: grid;
   grid-template-columns: 1fr  1fr;
+  margin-inline: auto;
+  margin-top: 40px;
+  //row-gap: 20px;
+  column-gap: 10px;
+
 }
