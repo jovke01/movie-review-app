@@ -1,6 +1,10 @@
-import Head from "next/head";
+import Head from 'next/head';
+import path from 'node:path';
+import * as fs from 'node:fs';
+import { Movie } from '@/types/Movie';
 
-export default function Home() {
+export default function Home({ movies }: { movies: Movie[] }) {
+  console.log(movies[0]);
   return (
     <>
       <Head>
@@ -9,9 +13,18 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        Hello
-      </div>
+      <div>Hello</div>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const filePath = path.join(process.cwd(), '/src/data', 'movies.json');
+  const jsonData = fs.readFileSync(filePath, 'utf-8');
+  const movies: Movie[] = JSON.parse(jsonData);
+  return {
+    props: {
+      movies: movies,
+    },
+  };
 }
