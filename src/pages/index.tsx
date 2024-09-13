@@ -2,7 +2,9 @@ import Head from 'next/head';
 import path from 'node:path';
 import * as fs from 'node:fs';
 import { Movie, MovieCard } from '@/types/Movie';
-import Image from 'next/image';
+import MovieCardComponent from '@/components/movieCard';
+import style from '../styles/Home.module.scss';
+import Nav from '@/components/nav';
 
 export default function Home({ movies }: { movies: MovieCard[] }) {
   return (
@@ -13,21 +15,10 @@ export default function Home({ movies }: { movies: MovieCard[] }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
+      <Nav />
+      <div className={style.cardGrid}>
         {movies.map((movie) => (
-          <div key={movie.id}>
-            <Image
-              width={100}
-              height={40}
-              src={movie.poster}
-              alt={movie.title}
-            />
-            <p>{movie.title}</p>
-            <p>{movie.poster}</p>
-            <p>{movie.release_date ?? ''}</p>
-            <p>{movie.isFavorite}</p>
-            <h2>{movie.imdbRating}</h2>
-          </div>
+          <MovieCardComponent movie={movie} key={movie.id} />
         ))}
       </div>
     </>
