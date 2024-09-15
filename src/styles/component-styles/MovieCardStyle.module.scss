@@ -2,11 +2,33 @@
   color: white;
   height: 450px;
   margin-bottom: 40px;
+  position: relative;
+  border-radius: 15px;
+  scroll-margin-bottom: 100px;
+  padding-bottom: 20px;
+
+  &:focus {
+    outline: 1px solid white;
+  }
+}
+
+.favorite {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #FB4549;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  padding: 10px;
 }
 
 .title {
   font-size: 20px;
   margin-bottom: 8px;
+  height: 46px;
+  padding-left: 10px;
 }
 
 .poster {
@@ -22,8 +44,14 @@
   display: flex;
   align-items: center;
 
+
   &:first-of-type {
     margin-bottom: 12px;
+    padding-right: 10px;
+  }
+
+  &:last-of-type {
+    padding-left: 10px;
   }
 
 
@@ -31,7 +59,4 @@
     margin-right: 7px;
   }
 
-  //p {
-  //  margin-top: 2px;
-  //}
 }

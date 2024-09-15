@@ -47,7 +47,6 @@ export async function getServerSideProps() {
         uniqueMovies.set(movie.id, movie);
       }
     });
-
     return Array.from(uniqueMovies.values());
   };
 

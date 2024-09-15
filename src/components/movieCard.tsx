@@ -4,11 +4,24 @@ import Image from 'next/image';
 import style from '../styles/component-styles/MovieCardStyle.module.scss';
 import starIcon from '../../public/assets/icons/star.png';
 import calendarIcon from '../../public/assets/icons/calendar.png';
+import favorite from '../../public/assets/svgs/favorite.svg';
+import favoriteChecked from '../../public/assets/svgs/favorite-checked.svg';
 import { formatDate } from '@/utils/date-util';
 
 const MovieCardComponent = ({ movie }: { movie: MovieCard }) => {
+  const [isFavorite, setIsFavorite] = React.useState(false);
+  const handleFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      setIsFavorite(!isFavorite);
+    }
+  };
   return (
-    <div key={movie.id} className={style.card}>
+    <div
+      key={movie.id}
+      className={style.card}
+      tabIndex={0}
+      onKeyUp={(event) => handleFocus(event)}
+    >
       <Image
         width={100}
         height={40}
@@ -16,6 +29,12 @@ const MovieCardComponent = ({ movie }: { movie: MovieCard }) => {
         alt={movie.title}
         className={style.poster}
       />
+      <div className={style.favorite}>
+        <Image
+          src={isFavorite ? favoriteChecked : favorite}
+          alt="is favorite"
+        />
+      </div>
       <div className="flex">
         <p className={style.title}>{movie.title}</p>
         <div className={style.textWIcon}>
@@ -27,8 +46,6 @@ const MovieCardComponent = ({ movie }: { movie: MovieCard }) => {
         <Image src={calendarIcon} width={24} height={24} alt="calendar icon" />
         <p>{formatDate(movie.release_date) ?? ''}</p>
       </div>
-
-      {/*<p>{movie.isFavorite.toString()}</p>*/}
     </div>
   );
 };
