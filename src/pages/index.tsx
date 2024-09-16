@@ -1,10 +1,9 @@
 import Head from 'next/head';
-import path from 'node:path';
-import * as fs from 'node:fs';
-import { Movie, MovieCard } from '@/types/Movie';
+import { MovieCard } from '@/types/Movie';
 import MovieCardComponent from '@/components/movieCard';
 import style from '../styles/Home.module.scss';
 import Nav from '@/components/nav';
+import { getFormattedMovies } from '@/services/MoviesService';
 
 export default function Home({ movies }: { movies: MovieCard[] }) {
   return (
@@ -17,8 +16,8 @@ export default function Home({ movies }: { movies: MovieCard[] }) {
       </Head>
       <Nav />
       <div className={style.cardGrid}>
-        {movies.map((movie) => (
-          <MovieCardComponent movie={movie} key={movie.id} />
+        {movies.map((movie, index) => (
+          <MovieCardComponent movie={movie} key={movie.id} index={index} />
         ))}
       </div>
     </>
@@ -26,37 +25,10 @@ export default function Home({ movies }: { movies: MovieCard[] }) {
 }
 
 export async function getServerSideProps() {
-  const filePath = path.join(process.cwd(), '/src/data', 'movies.json');
-  const jsonData = fs.readFileSync(filePath, 'utf-8');
-  const movies: Movie[] = JSON.parse(jsonData);
-
-  const formatedMovies = movies.map(
-    (movie): MovieCard => ({
-      id: movie.id,
-      title: movie.title,
-      poster: `${process.env.NEXT_PUBLIC_IMAGE_URL}/${movie.poster_path}`,
-      release_date: movie?.release_date ?? null,
-      isFavorite: false,
-      imdbRating: movie.ratings[0].rating,
-    })
-  );
-  const onlyUnique = (array: MovieCard[]): MovieCard[] => {
-    const uniqueMovies = new Map<number, MovieCard>();
-    array.forEach((movie) => {
-      if (!uniqueMovies.has(movie.id)) {
-        uniqueMovies.set(movie.id, movie);
-      }
-    });
-    return Array.from(uniqueMovies.values());
-  };
-
-  const filteredMovies = onlyUnique(formatedMovies);
-  const sortedMovies = filteredMovies.sort(
-    (a, b) => b.imdbRating - a.imdbRating
-  );
+  const movies = await getFormattedMovies();
   return {
     props: {
-      movies: onlyUnique(sortedMovies),
+      movies: movies,
     },
   };
 }

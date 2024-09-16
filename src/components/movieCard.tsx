@@ -8,7 +8,13 @@ import favorite from '../../public/assets/svgs/favorite.svg';
 import favoriteChecked from '../../public/assets/svgs/favorite-checked.svg';
 import { formatDate } from '@/utils/date-util';
 
-const MovieCardComponent = ({ movie }: { movie: MovieCard }) => {
+const MovieCardComponent = ({
+  movie,
+  index,
+}: {
+  movie: MovieCard;
+  index: number;
+}) => {
   const [isFavorite, setIsFavorite] = React.useState(false);
   const handleFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
@@ -28,6 +34,7 @@ const MovieCardComponent = ({ movie }: { movie: MovieCard }) => {
         src={movie.poster}
         alt={movie.title}
         className={style.poster}
+        priority={index < 10}
       />
       <div className={style.favorite}>
         <Image
